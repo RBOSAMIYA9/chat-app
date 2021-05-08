@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 function SideBar() {
 
     const [showAddRoom, setShowAddRoom] = useState(false)
+    // eslint-disable-next-line 
     const { colorMode, toggleColorMode } = useColorMode();
 
 

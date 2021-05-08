@@ -2,15 +2,10 @@ import React from 'react';
 import {
   ChakraProvider,
   Box,
-  Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
   theme,
 } from '@chakra-ui/react';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
-import { Logo } from './Logo';
+// import { ColorModeSwitcher } from './ColorModeSwitcher';
+// import { Logo } from './Logo';
 import SideBar from './components/SideBar';
 import ChatContainer from './components/ChatContainer';
 
