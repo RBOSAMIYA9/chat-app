@@ -3,6 +3,8 @@ import { Box, Text, Center, Button } from '@chakra-ui/react'
 import { auth, provider } from '../firebase/firebaseConfig'
 
 function Login() {
+    
+    // eslint-disable-next-line
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
     const signIn = () => {
         auth.signInWithPopup(provider).then((result) => {

@@ -2,36 +2,37 @@ import React, { useState, useEffect } from 'react'
 import {
     Box, Center, Text, useColorMode,
     Input, Button,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
-    ModalCloseButton,
-    Lorem, useDisclosure
+    // Modal,
+    // ModalOverlay,
+    // ModalContent,
+    
+    // ModalFooter,
+ 
+    // ModalCloseButton,
+    // useDisclosure
 
 } from '@chakra-ui/react'
 
-import { projectFirestore, timeStamp } from '../firebase/firebaseConfig'
+import { projectFirestore } from '../firebase/firebaseConfig'
 
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import { IoMdAddCircle } from 'react-icons/io';
 import { useForm } from 'react-hook-form';
-import { auth, provider } from '../firebase/firebaseConfig'
+import { auth } from '../firebase/firebaseConfig'
 import { AiOutlineCaretDown } from 'react-icons/ai'
-import { MdDelete } from 'react-icons/md'
+// import { MdDelete } from 'react-icons/md'
 import { addChatRoom } from '../firebase/dbOperations'
 function SideBar({ setUser, userInfo, setSelected }) {
 
     const [showAddRoom, setShowAddRoom] = useState(false)
     const [showLogout, setShowLogout] = useState(false)
+
     // eslint-disable-next-line 
     const { colorMode, toggleColorMode } = useColorMode();
     const [chatRoomsList, setChatRoomsList] = useState([]);
     const [totalChatRooms, setTotalChatRooms] = useState(0);
 
-    const { isOpen, onOpen, onClose } = useDisclosure()
+    // const { isOpen, onOpen, onClose } = useDisclosure()
 
     const {
         register,
@@ -45,11 +46,11 @@ function SideBar({ setUser, userInfo, setSelected }) {
 
     }
 
-    const iconColor = colorMode === 'light' ? "black" : "white"
-    const iconStyle = {
-        color: iconColor
+    // const iconColor = colorMode === 'light' ? "black" : "white"
+    // const iconStyle = {
+    //     color: iconColor
 
-    }
+    // }
     const toggleLogOut = () => {
         setShowLogout(!showLogout)
     }
@@ -168,18 +169,18 @@ function SideBar({ setUser, userInfo, setSelected }) {
                                     justifyContent="space-between"
                                 >
                                     # {doc.data.roomName}
-                                    <MdDelete onClick={onOpen} />
+                                    {/* <MdDelete onClick={onOpen} /> */}
                                 </Text>
 
 
                             ))}
                         {/* <Button onClick={onOpen}>Open Modal</Button> */}
 
-                        <Modal isOpen={isOpen} onClose={onClose}>
+                        {/* <Modal isOpen={isOpen} onClose={onClose}>
                             <ModalOverlay />
 
                             <ModalContent>
-                                {/* <ModalHeader>Modal Title</ModalHeader> */}
+                               
                                 <Center>
                                     <Box p={5}>Delete room</Box>
                                 </Center>
@@ -204,7 +205,7 @@ function SideBar({ setUser, userInfo, setSelected }) {
 
                                 </ModalFooter>
                             </ModalContent>
-                        </Modal>
+                        </Modal> */}
                     </Box>
                 </Center>
             </Box>

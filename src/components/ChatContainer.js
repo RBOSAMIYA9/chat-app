@@ -1,8 +1,8 @@
 import { Box, Text, Input, Button } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { FiSend } from 'react-icons/fi'
-import { GrAttachment } from 'react-icons/gr'
-import { projectFirestore, timeStamp } from '../firebase/firebaseConfig'
+// import { GrAttachment } from 'react-icons/gr'
+import { projectFirestore } from '../firebase/firebaseConfig'
 import { useForm } from 'react-hook-form';
 import { addMessage } from '../firebase/dbOperations'
 

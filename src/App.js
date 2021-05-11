@@ -8,16 +8,16 @@ import {
 // import { Logo } from './Logo';
 import SideBar from './components/SideBar';
 import ChatContainer from './components/ChatContainer';
-import Login from './components/Login';
+// import Login from './components/Login';
 import React, { useState } from 'react'
 import { auth, provider } from './firebase/firebaseConfig'
 
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
+// import {
+//   BrowserRouter as Router,
+//   Switch,
+//   Route,
+//   Link
+// } from "react-router-dom";
 
 function App() {
 
