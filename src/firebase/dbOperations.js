@@ -33,4 +33,16 @@ const addMessage = (roomId, message, sender) => {
 }
 
 
-export { addChatRoom, addMessage }
+const deleteChatRoomById = (id) => {
+    return new Promise((resolve, reject) => {
+        console.log("id in delete", id);
+        const collectionRef = projectFirestore.collection("chatData");
+        collectionRef.doc(id).delete().then(() => {
+            console.log("deleted chat room");
+            resolve("deleted")
+        }).catch((e) => reject("failed to delete"))
+    })
+
+}
+
+export { addChatRoom, addMessage, deleteChatRoomById }

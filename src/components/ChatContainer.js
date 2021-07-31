@@ -1,5 +1,5 @@
 import { Box, Text, Input, Button } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { FiSend } from 'react-icons/fi'
 // import { GrAttachment } from 'react-icons/gr'
 import { projectFirestore } from '../firebase/firebaseConfig'
@@ -8,7 +8,8 @@ import { addMessage } from '../firebase/dbOperations'
 
 
 function ChatContainer({ selected, userInfo }) {
-    const [messages, setMessages] = useState([])
+    const [messages, setMessages] = useState([]);
+    const messagesEndRef = useRef(null);
 
     useEffect(() => {
         if (Object.keys(selected).length > 0) {
@@ -23,11 +24,17 @@ function ChatContainer({ selected, userInfo }) {
                 ))
                 setMessages(messages)
                 console.log("messages", messages);
-
+                scrollToBottom();
             })
+
         }
 
     }, [selected])
+
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView()
+    }
 
     const {
         register,
@@ -65,7 +72,7 @@ function ChatContainer({ selected, userInfo }) {
 
                                                         <p> {messages.data.message}</p>
                                                         <Box d="flex" justifyContent="flex-end"  >
-                                                            
+
                                                             {/* <Text as="span" fontSize="sm">
                                                                     {messages.data.timestamp.toDate().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}
                                                                 </Text> */}
@@ -93,8 +100,9 @@ function ChatContainer({ selected, userInfo }) {
 
 
                                 ))
-                            }
 
+                            }
+                            <Box ref={messagesEndRef} />
                         </Box>
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <Box position="fixed" bottom="0" width="75%">

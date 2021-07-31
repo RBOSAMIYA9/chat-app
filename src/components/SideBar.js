@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import {
     Box, Center, Text, useColorMode,
-    Input, Button,
-    // Modal,
-    // ModalOverlay,
-    // ModalContent,
-    
-    // ModalFooter,
- 
-    // ModalCloseButton,
-    // useDisclosure
+    Input, Button, Spinner,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+
+    ModalFooter,
+
+    ModalCloseButton,
+    useDisclosure
 
 } from '@chakra-ui/react'
 
@@ -20,8 +20,8 @@ import { IoMdAddCircle } from 'react-icons/io';
 import { useForm } from 'react-hook-form';
 import { auth } from '../firebase/firebaseConfig'
 import { AiOutlineCaretDown } from 'react-icons/ai'
-// import { MdDelete } from 'react-icons/md'
-import { addChatRoom } from '../firebase/dbOperations'
+import { MdDelete } from 'react-icons/md'
+import { addChatRoom, deleteChatRoomById } from '../firebase/dbOperations'
 function SideBar({ setUser, userInfo, setSelected }) {
 
     const [showAddRoom, setShowAddRoom] = useState(false)
@@ -31,8 +31,9 @@ function SideBar({ setUser, userInfo, setSelected }) {
     const { colorMode, toggleColorMode } = useColorMode();
     const [chatRoomsList, setChatRoomsList] = useState([]);
     const [totalChatRooms, setTotalChatRooms] = useState(0);
-
-    // const { isOpen, onOpen, onClose } = useDisclosure()
+    const [loading, setLoading] = useState(false);
+    const [modalContent, setmodalContent] = useState({});
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const {
         register,
@@ -61,21 +62,39 @@ function SideBar({ setUser, userInfo, setSelected }) {
         })
     }
 
-    useEffect(() => {
+    const fetchChatRooms = () => {
+        return new Promise((resolve, reject) => {
+            const collectionRef = projectFirestore.collection("chatData");
+            collectionRef.onSnapshot((snapshot) => {
+                setTotalChatRooms(snapshot.docs.length);
+                console.log("snapshot:  ", snapshot.docs.length);
 
-        const collectionRef = projectFirestore.collection("chatData");
-        collectionRef.onSnapshot((snapshot) => {
-            setTotalChatRooms(snapshot.docs.length);
-            console.log("snapshot:  ", snapshot.docs.length);
-
-            var data = snapshot.docs.map((document) => (
-                {
-                    id: document.id,
-                    data: document.data()
-                }
-            ))
-            setChatRoomsList(data)
+                var data = snapshot.docs.map((document) => (
+                    {
+                        id: document.id,
+                        data: document.data()
+                    }
+                ))
+                setChatRoomsList(data)
+                resolve("set data to list")
+            })
         })
+
+    }
+
+    const deleteRoom = (id, name) => {
+        console.log("room id", id, "room name", name);
+        deleteChatRoomById(id)
+            .then(data => console.log("data from delete function", data))
+            .catch((e) => console.log("error", e))
+    }
+    useEffect(() => {
+        setLoading(true);
+        fetchChatRooms().then((data) => {
+            setLoading(false);
+        })
+
+
 
     }, [])
 
@@ -105,7 +124,7 @@ function SideBar({ setUser, userInfo, setSelected }) {
                         <Box borderRadius="lg" boxShadow="lg" width="50%" p={3}>
                             <Button alignItems="center" onClick={() => signOut()} color={colorMode === 'light' ? "black" : "white"}>
                                 &nbsp;Logout
-                    </Button>
+                            </Button>
                         </Box>
                     </Center>
                 }
@@ -117,7 +136,7 @@ function SideBar({ setUser, userInfo, setSelected }) {
                         <Text>
                             All channels ({totalChatRooms}) &nbsp;&nbsp;
 
-                    </Text>
+                        </Text>
                         {/* color={colorMode == 'light' ? "white" : "black"} */}
                         <Box cursor="pointer" onClick={() => setShowAddRoom(true)}>
 
@@ -134,10 +153,10 @@ function SideBar({ setUser, userInfo, setSelected }) {
                             <Box d="flex" justifyContent="space-around" mt={6}>
                                 <Button colorScheme="messenger" type="submit">
                                     Save
-                    </Button>
+                                </Button>
                                 <Button onClick={() => setShowAddRoom(false)} >
                                     Cancel
-                    </Button>
+                                </Button>
 
                             </Box>
 
@@ -147,40 +166,58 @@ function SideBar({ setUser, userInfo, setSelected }) {
 
                 {/* for listing rooms */}
                 <Center>
+
+                    {loading &&
+                        <Center w="100%">
+                            <Spinner size="md" />
+                        </Center>
+                    }
                     <Box width="80%" textAlign="left">
 
 
                         {chatRoomsList &&
                             chatRoomsList.map((doc) => (
-                                <Text _hover={{
-                                    backgroundColor: "gray"
-                                }}
-                                    p={2}
-                                    cursor="pointer"
-                                    key={doc.id}
-                                    onClick={() => {
-                                        setSelected({
-                                            id: doc.id,
-                                            data: doc.data
-                                        })
+                                <Box d="flex" alignItems="center" justifyContent="space-between">
+                                    <Text _hover={{
+                                        backgroundColor: "gray"
                                     }}
-                                    d="flex"
-                                    alignItems="center"
-                                    justifyContent="space-between"
-                                >
-                                    # {doc.data.roomName}
-                                    {/* <MdDelete onClick={onOpen} /> */}
-                                </Text>
+                                        p={2}
+                                        cursor="pointer"
+                                        key={doc.id}
+                                        onClick={() => {
+                                            setSelected({
+                                                id: doc.id,
+                                                data: doc.data
+                                            })
+                                        }}
+                                        d="flex"
+                                        alignItems="center"
+                                        justifyContent="space-between"
+                                    >
+                                        # {doc.data.roomName}
 
+
+                                    </Text>
+                                    {doc.data.createdBy === userInfo.name &&
+                                        <Box cursor="pointer" >
+                                            <MdDelete onClick={() => {
+                                                onOpen()
+                                                setmodalContent({ id: doc.id, roomName: doc.data.roomName })
+                                            }} />
+                                        </Box>
+                                    }
+
+
+                                </Box>
 
                             ))}
                         {/* <Button onClick={onOpen}>Open Modal</Button> */}
 
-                        {/* <Modal isOpen={isOpen} onClose={onClose}>
+                        <Modal isOpen={isOpen} onClose={onClose}>
                             <ModalOverlay />
 
                             <ModalContent>
-                               
+
                                 <Center>
                                     <Box p={5}>Delete room</Box>
                                 </Center>
@@ -190,8 +227,8 @@ function SideBar({ setUser, userInfo, setSelected }) {
                                 <Center>
                                     <Box p={5}>
 
-                                        <Text>Are you sure you want to delete this room?
-                                        
+                                        <Text>Are you sure you want to delete <b>{modalContent.roomName}</b>  room?
+
                                         </Text>
                                     </Box>
                                 </Center>
@@ -199,13 +236,16 @@ function SideBar({ setUser, userInfo, setSelected }) {
 
                                 <ModalFooter>
                                     <Button colorScheme="gray" mx={3} onClick={onClose}>Cancel</Button>
-                                    <Button colorScheme="red" >
+                                    <Button colorScheme="red" onClick={() => {
+                                        deleteRoom(modalContent.id, modalContent.roomName)
+                                        onClose()
+                                    }} >
                                         Delete
                                     </Button>
 
                                 </ModalFooter>
                             </ModalContent>
-                        </Modal> */}
+                        </Modal>
                     </Box>
                 </Center>
             </Box>
